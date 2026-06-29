@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Knowledge Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 GenAI Knowledge Assistant</h1>
+            <p>Ask questions about GenAI, LLMs, embeddings, and more!</p>
+        </header>
+
+        <main>
+            <section class="query-section">
+                <form id="queryForm">
+                    <div class="form-group">
+                        <label for="questionInput">Your Question:</label>
+                        <textarea
+                            id="questionInput"
+                            placeholder="E.g., What is the role of embeddings in GenAI?"
+                            rows="3"
+                        ></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">🔍 Ask Question</button>
+                </form>
+                <div id="loadingSpinner" class="hidden">
+                    <p>⏳ Retrieving context and generating answer...</p>
+                </div>
+            </section>
+
+            <section id="resultsSection" class="results-section hidden">
+                <!-- Question Display -->
+                <div class="card question-card">
+                    <h3>📝 Your Question:</h3>
+                    <p id="displayQuestion"></p>
+                </div>
+
+                <!-- Retrieved Context -->
+                <div class="card context-card">
+                    <h3>🔗 Retrieved Context (<span id="contextCount">0</span> chunks):</h3>
+                    <div id="contextContainer"></div>
+                </div>
+
+                <!-- LLM Response -->
+                <div class="card answer-card">
+                    <h3>✨ Assistant Response:</h3>
+                    <p id="displayAnswer"></p>
+                </div>
+
+                <button class="btn-new-question" onclick="resetForm()">← Ask Another Question</button>
+            </section>
+
+            <section id="errorSection" class="error-section hidden">
+                <div class="error-card">
+                    <h3>⚠️ Error:</h3>
+                    <p id="errorMessage"></p>
+                    <p id="errorDetails" class="error-details"></p>
+                    <button class="btn-retry" onclick="resetForm()">← Try Again</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>GenAI Foundation Training | Using ChromaDB + SentenceTransformer + Claude API</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('queryForm');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorSection = document.getElementById('errorSection');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = document.getElementById('questionInput').value.trim();
+
+            if (!question) {
+                alert('Please enter a question');
+                return;
+            }
+
+            // Show loading state
+            form.style.display = 'none';
+            loadingSpinner.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error, data.details);
+                } else {
+                    displayResults(data);
+                }
+            } catch (error) {
+                showError('Network Error', error.message);
+            } finally {
+                loadingSpinner.classList.add('hidden');
+            }
+        });
+
+        function displayResults(data) {
+            document.getElementById('displayQuestion').textContent = data.question;
+            document.getElementById('contextCount').textContent = data.num_context_chunks;
+            document.getElementById('displayAnswer').textContent = data.answer;
+
+            // Display retrieved context with similarity scores
+            const contextContainer = document.getElementById('contextContainer');
+            contextContainer.innerHTML = '';
+
+            data.context.forEach((item, index) => {
+                const contextCard = document.createElement('div');
+                contextCard.className = 'context-item';
+                contextCard.innerHTML = `
+                    <div class="context-header">
+                        <span class="context-index">Chunk ${index + 1}</span>
+                        <span class="context-topic">#${item.topic}</span>
+                        <span class="similarity-score">
+                            Similarity: ${(item.similarity * 100).toFixed(1)}%
+                            <br>
+                            <small>Distance: ${item.distance}</small>
+                        </span>
+                    </div>
+                    <p class="context-text">${item.text}</p>
+                `;
+                contextContainer.appendChild(contextCard);
+            });
+
+            resultsSection.classList.remove('hidden');
+            form.style.display = 'none';
+        }
+
+        function showError(error, details) {
+            document.getElementById('errorMessage').textContent = error;
+            document.getElementById('errorDetails').textContent = details || '';
+            errorSection.classList.remove('hidden');
+            form.style.display = 'none';
+        }
+
+        function resetForm() {
+            document.getElementById('questionInput').value = '';
+            form.style.display = 'block';
+            resultsSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+            document.getElementById('questionInput').focus();
+        }
+    </script>
+</body>
+</html>

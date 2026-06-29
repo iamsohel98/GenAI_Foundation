@@ -1,438 +1,249 @@
-# GenAI Foundation - Embedding & LLM Exercises
+# GenAI Knowledge Assistant
 
-A comprehensive learning project for understanding embeddings and LLM API integration using Python.
+A Flask-based Retrieval-Augmented Generation (RAG) application that demonstrates how to build an intelligent knowledge assistant using ChromaDB, embeddings, and Claude LLM API.
 
-## 📋 Project Contents
+## Project Overview
 
-### Core Files
+This application showcases:
+- **Vector Embeddings**: Converting text to semantic vectors using SentenceTransformer
+- **Semantic Search**: Retrieving relevant context from ChromaDB based on meaning
+- **Retrieval-Augmented Generation**: Combining retrieved context with LLM generation
+- **Prompt Engineering**: Using persona, context, task, and constraints in prompts
+- **Error Handling**: Graceful handling of API errors (401, 404, 405)
+- **Secure Configuration**: Environment-based secret management
 
-#### 1. **Exercise 1: Text Embeddings & Similarity Comparison**
+## Architecture
 
-**Files:**
-- `exercise1_embeddings_similarity.py` - Standalone Python script
-- `Exercise1_Embeddings_Similarity.ipynb` - Jupyter notebook with 10 blocks
-
-**What You'll Learn:**
-- Generate text embeddings using SentenceTransformer (all-MiniLM-L6-v2)
-- Convert sentences into 384-dimensional vectors
-- Calculate cosine similarity between sentence pairs
-- Interpret and visualize similarity scores
-- Understand semantic relationships
-
-**Key Blocks:**
-1. Import libraries
-2. Load SentenceTransformer model
-3. Define sample sentences
-4. Generate embeddings
-5. Display first 5 dimensions
-6. Calculate similarity matrix
-7. Detailed pairwise comparison
-8. Summary statistics
-9. Find most/least similar pairs
-10. Key insights
-
-**Sample Output:**
 ```
-Similarity Matrix:
-                              Sent1    Sent2    Sent3    Sent4    Sent5
-GenAI is transforming...      1.0000  0.5368  0.0684  0.2727  0.0433
-Artificial Intelligence...    0.5368  1.0000  0.1084  0.4506  -0.0122
-...
-
-Most Similar: Sentence 1 & 2 (0.5368) - Both about AI
-Least Similar: Sentence 2 & 5 (-0.0122) - Unrelated topics
+User Browser
+    ↓
+Flask Web App
+    ├── Convert user query to embedding (SentenceTransformer)
+    ├── Search ChromaDB for top relevant chunks
+    ├── Prepare prompt with persona + context + task + constraints
+    ├── Call Claude API with retrieved context
+    └── Display answer + context + similarity scores
 ```
 
----
+## Setup Instructions
 
-#### 2. **Exercise 2: Calling LLM via API**
+### 1. Prerequisites
+- Python 3.9+
+- pip (Python package manager)
 
-**Files:**
-- `exercise2_llm_api.py` - Standalone Python script
-- `Exercise2_LLM_API.ipynb` - Jupyter notebook with 13 blocks
-
-**What You'll Learn:**
-- Make HTTP requests to LLM API endpoints
-- Structure API payloads with authentication
-- Parse and extract responses
-- Control generation with temperature parameter
-- Handle API errors gracefully
-- Compare responses across parameters
-
-**Key Blocks:**
-1. Import libraries and setup
-2. Configure API credentials
-3. Define API call function
-4. Define response extraction
-5. Query 1 - Technical question (temp 0.5)
-6. Display Query 1 response
-7. Query 2 - Creative question (temp 0.9)
-8. Display Query 2 response
-9. Query 3 - Dynamic user input
-10. Display Query 3 response
-11. Temperature comparison
-12. Error handling best practices
-13. Key learnings
-
-**Temperature Effects:**
-```
-Temperature 0.5 (Query 1): Deterministic, focused
-  → Best for technical/factual questions
-
-Temperature 0.9 (Query 2): Creative, exploratory
-  → Best for brainstorming/creative tasks
-
-Temperature 0.7 (Query 3): Balanced
-  → General purpose queries
-```
-
----
-
-### Original Demo Files
-
-- `embeddingDemo.py` - Basic embedding demo
-- `embeddingDemo.ipynb` - Basic embedding notebook (5 blocks)
-- `embeddingWithAI.ipynb` - Embedding + Claude Haiku integration (8 blocks)
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- Virtual environment (.venv)
-- Dependencies installed
-
-### Installation
-
+### 2. Create Virtual Environment
 ```bash
-# Navigate to project directory
-cd /home/ubuntu/Desktop/EmbbedingDemo
+python -m venv venv
 
 # Activate virtual environment
-source .venv/bin/activate
+# Linux/Mac:
+source venv/bin/activate
 
-# Install dependencies (if not already installed)
-pip install sentence-transformers torch scikit-learn anthropic requests python-dotenv
+# Windows:
+venv\Scripts\activate
 ```
 
-### Configuration
-
-1. **Update `.env` file** with your Anthropic API key:
-   ```
-   ANTHROPIC_API_KEY=your_api_key_here
-   ```
-
-2. Get your API key from: https://console.anthropic.com/
-
----
-
-## 📖 Running the Exercises
-
-### Exercise 1: Embeddings & Similarity
-
-**Option 1: Python Script**
+### 3. Install Dependencies
 ```bash
-source .venv/bin/activate
-python exercise1_embeddings_similarity.py
+pip install -r requirements.txt
 ```
 
-**Option 2: Jupyter Notebook**
+### 4. Configure Environment Variables
+Edit `.env` file with:
+```
+ANTHROPIC_API_KEY=your_anthropic_api_key
+LLM_ENDPOINT=https://api.anthropic.com/v1/messages
+LLM_MODEL=claude-3-5-sonnet-20241022
+```
+
+### 5. Run the Application
 ```bash
-source .venv/bin/activate
-jupyter notebook Exercise1_Embeddings_Similarity.ipynb
+python app.py
 ```
 
-**Expected Output:**
-- Embedding shape and dimensions
-- First 5 dimensions of each embedding
-- Full similarity matrix
-- Pairwise similarity analysis
-- Summary statistics
+The application will be available at `http://127.0.0.1:5000`
 
----
+## Features
 
-### Exercise 2: LLM API Integration
+### ✅ Evaluation Criteria Met
 
-**Option 1: Python Script**
-```bash
-source .venv/bin/activate
-python exercise2_llm_api.py
+| Area | Implementation |
+|------|-----------------|
+| **Flask UI** | Clean, responsive interface for submitting questions |
+| **ChromaDB** | 10 knowledge chunks stored with embeddings and metadata |
+| **Embeddings** | SentenceTransformer (`all-MiniLM-L6-v2`) generates query and document embeddings |
+| **Retrieval** | Top-3 relevant chunks selected using cosine distance similarity |
+| **LLM Integration** | Claude API called with proper headers, payload, and error handling |
+| **Security** | API key loaded from `.env`, no hardcoded secrets |
+| **Prompt Engineering** | Prompt includes persona (GenAI assistant), context (retrieved chunks), task (generate answer), constraints (no hallucination) |
+| **Error Handling** | 401 (invalid key), 404 (model not found), 405 (method error), network errors handled |
+| **RAG Readiness** | Full retrieval before generation pattern implemented |
+
+## How It Works
+
+### 1. Knowledge Base Initialization
+- ChromaDB collection created on first run
+- 10 GenAI-related documents stored with embeddings
+- Each document includes metadata (topic, difficulty)
+
+### 2. Query Processing Flow
+```
+User Question
+    ↓
+Encode to Vector Embedding
+    ↓
+Search ChromaDB (cosine similarity)
+    ↓
+Retrieve Top 3 Chunks + Similarity Scores
+    ↓
+Build Prompt with Context
+    ↓
+Call Claude API
+    ↓
+Display Results (Question + Context + Answer)
 ```
 
-**Option 2: Jupyter Notebook**
-```bash
-source .venv/bin/activate
-jupyter notebook Exercise2_LLM_API.ipynb
+### 3. Prompt Engineering Strategy
+The system uses prompt engineering with:
+- **Persona**: "Helpful GenAI training assistant"
+- **Context**: Retrieved knowledge chunks
+- **Task**: Provide beginner-friendly explanation
+- **Constraints**: Use only provided context, keep to 2-3 sentences, no hallucination
+
+## Similarity Metrics
+
+The application uses **cosine similarity** to find relevant documents:
+- Distance ranges from 0 to 2 (0 = identical, 2 = opposite)
+- Similarity = 1 - distance (ranges from 0 to 1)
+- Displayed as percentage (0-100%)
+
+## Error Handling Examples
+
+### 401 - Unauthorized
+```
+Invalid or expired API key
+Check ANTHROPIC_API_KEY in .env
 ```
 
-**Expected Output:**
-- Full JSON API responses
-- Extracted assistant replies
-- Token usage statistics
-- Temperature comparison analysis
-
----
-
-## 📊 Understanding Embeddings
-
-### What are Embeddings?
-- Numerical representations of text as vectors
-- Each dimension captures different semantic features
-- Similar texts produce similar vectors
-
-### Cosine Similarity
-- Measures angle between two vectors (not distance)
-- Range: -1 (opposite) to +1 (identical)
-- Formula: cos(θ) = (A · B) / (|A| |B|)
-
-### Interpretation
+### 404 - Not Found
 ```
-Score > 0.7 : Very similar (same topic)
-Score 0.5-0.7 : Similar (related topics)
-Score 0.3-0.5 : Moderate (loosely related)
-Score < 0.3 : Different (unrelated topics)
+LLM model 'claude-3-5-sonnet-20241022' not found
+Check LLM_MODEL in .env
 ```
 
----
-
-## 🔌 Understanding LLM APIs
-
-### API Structure
-
-**Headers:**
-```python
-{
-    "x-api-key": "your_api_key",
-    "anthropic-version": "2023-06-01",
-    "content-type": "application/json"
-}
+### 405 - Method Not Allowed
+```
+Invalid HTTP method
+Check LLM_ENDPOINT in .env
 ```
 
-**Payload:**
-```python
-{
-    "model": "claude-3-5-haiku-20241022",
-    "max_tokens": 1024,
-    "temperature": 0.7,
-    "messages": [
-        {"role": "user", "content": "Your query here"}
-    ]
-}
+## Knowledge Base Topics
+
+The system includes training material on:
+1. Embeddings
+2. Large Language Models (LLMs)
+3. Prompt Engineering
+4. Transformers
+5. Retrieval-Augmented Generation (RAG)
+6. Vector Databases
+7. Semantic Search
+8. ChromaDB
+9. Similarity Metrics
+10. GenAI Applications
+
+## File Structure
+
+```
+genai-flask-chroma-assistant/
+├── app.py                    # Flask application and RAG logic
+├── requirements.txt          # Python dependencies
+├── .env                      # Environment variables (secrets)
+├── README.md                 # This file
+├── templates/
+│   └── index.html           # Web UI
+├── static/
+│   └── style.css            # Styling
+└── chroma_db/               # ChromaDB persistent storage (auto-created)
 ```
 
-### Response Structure
-```python
-{
-    "id": "msg_...",
-    "type": "message",
-    "role": "assistant",
-    "content": [
-        {"type": "text", "text": "Response text here"}
-    ],
-    "model": "claude-3-5-haiku-20241022",
-    "stop_reason": "end_turn",
-    "usage": {
-        "input_tokens": 100,
-        "output_tokens": 250
-    }
-}
-```
+## How ChromaDB Helps in RAG Applications
 
----
+ChromaDB is crucial for RAG systems because:
 
-## 🔧 Customization
+1. **Semantic Storage**: Stores documents alongside their embeddings, not just text
+2. **Fast Retrieval**: Performs vector similarity search efficiently at scale
+3. **Metadata Support**: Associates additional information with each document
+4. **Flexible Distance Metrics**: Supports cosine, L2, and other similarity measures
+5. **Persistence**: Keeps the knowledge base available across sessions
+6. **Scalability**: Can handle large numbers of documents and embeddings
 
-### Modify Sentences (Exercise 1)
-Edit the `sentences` list in the notebook or script:
-```python
-sentences = [
-    "Your sentence 1",
-    "Your sentence 2",
-    "Your sentence 3"
-]
-```
+In RAG workflows, ChromaDB serves as the "memory" that:
+- Stores pre-computed embeddings for faster search
+- Enables semantic (meaning-based) retrieval vs keyword search
+- Reduces LLM hallucination by providing grounded context
+- Makes AI applications more accurate and reliable
 
-### Modify Queries (Exercise 2)
-Edit the `query1`, `query2`, `user_input` variables:
-```python
-query1 = "Your custom question here?"
-```
+## Example Usage
 
-### Adjust Parameters
-```python
-# Temperature (creativity)
-temperature = 0.7  # 0.0-1.0
+**Question**: "What is the role of embeddings in GenAI?"
 
-# Max tokens (response length)
-max_tokens = 512   # 1-4096
+**Retrieved Context**:
+- Chunk 1 (Similarity: 92%): "Embeddings are numerical vector representations that capture semantic meaning..."
+- Chunk 2 (Similarity: 87%): "Vector databases like ChromaDB store embeddings and support semantic search..."
+- Chunk 3 (Similarity: 82%): "GenAI applications combine multiple AI techniques: embeddings for meaning representation..."
 
-# Similarity threshold
-if similarity_score > 0.6:  # Adjust threshold
-    print("Similar!")
-```
+**Assistant Response**:
+"Embeddings help GenAI systems understand the meaning of text by converting words or sentences into numerical vectors. These vectors allow the application to compare meanings, retrieve relevant context from ChromaDB, and provide better responses through the LLM."
 
----
+## Testing
 
-## 📈 Performance Metrics
+To test the application:
 
-### Model: all-MiniLM-L6-v2
-- **Embedding Dimension:** 384
-- **Model Size:** ~33M parameters
-- **Speed:** Very fast (CPU-friendly)
-- **Accuracy:** Good for semantic search
+1. Start the Flask server
+2. Navigate to `http://127.0.0.1:5000`
+3. Try questions like:
+   - "What are embeddings?"
+   - "How does RAG work?"
+   - "What is ChromaDB?"
+   - "Explain transformers"
+   - "What is semantic search?"
 
-### API: Claude 3.5 Haiku
-- **Speed:** Extremely fast
-- **Cost:** Lowest tier
-- **Use Case:** Quick responses, real-time apps
-- **Token Limits:** Up to 1M tokens per minute
+## Security Best Practices
 
----
+✅ **Implemented**:
+- API keys loaded from `.env`, not hardcoded
+- `.env` file excluded from version control (`.gitignore`)
+- Input validation on user questions
+- Proper error messages without exposing system details
+- Secure HTTP headers in API calls
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### Issue: Model Download Fails
-**Solution:**
-```bash
-export HF_TOKEN=your_huggingface_token
-python exercise1_embeddings_similarity.py
-```
-
-### Issue: API Authentication Error
-**Solution:**
-1. Verify API key in `.env` file
-2. Check API key is valid (not expired)
-3. Ensure no extra spaces in API key
-
-### Issue: Timeout Errors
-**Solution:**
-- Increase timeout value in script
+**Issue**: "Connection Error" or "Request Timeout"
 - Check internet connection
-- Retry after a few seconds
+- Verify `LLM_ENDPOINT` in `.env`
+- Try again after a few seconds
 
-### Issue: Memory Error with Large Datasets
-**Solution:**
-- Process embeddings in batches
-- Reduce `convert_to_tensor=True` (use numpy arrays)
+**Issue**: "Unauthorized (401)"
+- Verify `ANTHROPIC_API_KEY` is correct
+- Check API key hasn't expired
+- Ensure no extra spaces in `.env`
 
----
+**Issue**: "Not Found (404)"
+- Verify `LLM_MODEL` name is correct
+- Check model is available in your Anthropic account
 
-## 📚 Learning Resources
+**Issue**: ChromaDB connection error
+- Ensure `chroma_db/` directory has write permissions
+- Try deleting `chroma_db/` to reset the database
 
-### Embeddings
-- [SentenceTransformers Documentation](https://www.sbert.net/)
-- [Cosine Similarity Explained](https://en.wikipedia.org/wiki/Cosine_similarity)
-- [Semantic Search Guide](https://www.sbert.net/docs/usage/semantic_search.html)
+## Learning Resources
 
-### LLM APIs
-- [Anthropic API Documentation](https://docs.anthropic.com/)
-- [Claude Model Cards](https://docs.anthropic.com/claude/reference/model-ids-and-pricing)
-- [API Best Practices](https://docs.anthropic.com/en/api/recommendations)
+- [ChromaDB Documentation](https://docs.trychroma.com/)
+- [SentenceTransformer](https://www.sbert.net/)
+- [Claude API Documentation](https://docs.anthropic.com/)
+- [RAG Pattern](https://python.langchain.com/docs/use_cases/question_answering/)
 
-### General
-- [Natural Language Processing](https://www.coursera.org/learn/natural-language-processing)
-- [Deep Learning](https://www.deeplearningbook.org/)
+## License
 
----
-
-## 📝 Project Structure
-
-```
-EmbbedingDemo/
-├── README.md                                    # This file
-├── EXERCISES_SUMMARY.md                         # Exercise details
-├── .env                                         # API keys (not in git)
-├── .venv/                                       # Virtual environment
-├── .gitignore                                   # Git ignore rules
-│
-├── Original Demos:
-│   ├── embeddingDemo.py
-│   ├── embeddingDemo.ipynb
-│   └── embeddingWithAI.ipynb
-│
-├── Exercise 1 - Embeddings:
-│   ├── exercise1_embeddings_similarity.py       # Standalone script
-│   └── Exercise1_Embeddings_Similarity.ipynb    # Jupyter notebook
-│
-└── Exercise 2 - LLM API:
-    ├── exercise2_llm_api.py                     # Standalone script
-    └── Exercise2_LLM_API.ipynb                  # Jupyter notebook
-```
-
----
-
-## 🎯 Next Steps
-
-After completing these exercises:
-
-1. **Combine Both Concepts:**
-   - Convert user query to embedding
-   - Find similar queries in database
-   - Use similarity for context
-
-2. **Build a Semantic Search:**
-   - Index documents with embeddings
-   - Query by semantic similarity
-   - Rank results by relevance
-
-3. **Create a Chatbot:**
-   - Store conversation embeddings
-   - Find relevant context
-   - Generate responses with LLM
-
-4. **Deploy to Production:**
-   - Use vector database (Pinecone, Milvus)
-   - Implement caching
-   - Add rate limiting
-
----
-
-## 📞 Support & Feedback
-
-For issues or questions:
-1. Check the troubleshooting section
-2. Review documentation in `.md` files
-3. Refer to official documentation
-4. Check git history for examples
-
----
-
-## 📄 License
-
-This project is for educational purposes.
-
----
-
-## ✨ Created By
-
-**SM SOHEL BISWAS** (iamsohel98)  
-Email: iamsmsohel678@gmail.com
-
----
-
-**Last Updated:** June 24, 2026
-
----
-
-## 🎓 Learning Outcomes Checklist
-
-### Exercise 1 ✅
-- [ ] Understand what embeddings are
-- [ ] Generate embeddings for text
-- [ ] Calculate similarity scores
-- [ ] Interpret results
-- [ ] Visualize similarity matrix
-
-### Exercise 2 ✅
-- [ ] Make API calls with requests library
-- [ ] Structure API payloads
-- [ ] Parse JSON responses
-- [ ] Handle API errors
-- [ ] Control response with parameters
-- [ ] Compare responses across conditions
-
----
-
-Enjoy learning! 🚀
+MIT License - Feel free to use and modify for learning purposes.
