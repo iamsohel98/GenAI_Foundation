@@ -1,0 +1,51 @@
+id,city,locality,bhk,size_sqft,floor,total_floors,furnishing,tenant_type,bathroom,area_type,rent_monthly
+1,Mumbai,Andheri West,2,850,3,10,Semi-Furnished,Family,2,Super Area,35000
+2,Mumbai,Bandra East,3,1200,5,12,Furnished,Family,3,Carpet Area,75000
+3,Mumbai,Dadar,1,450,1,6,Unfurnished,Bachelor,1,Super Area,18000
+4,Mumbai,Powai,2,950,7,15,Furnished,Family,2,Super Area,45000
+5,Mumbai,Borivali,3,1100,2,8,Semi-Furnished,Family,2,Super Area,32000
+6,Bangalore,Koramangala,2,900,4,9,Furnished,Bachelor,2,Carpet Area,28000
+7,Bangalore,Whitefield,3,1350,6,14,Semi-Furnished,Family,3,Super Area,38000
+8,Bangalore,Indiranagar,1,550,2,5,Furnished,Bachelor,1,Super Area,20000
+9,Bangalore,HSR Layout,2,1000,3,8,Unfurnished,Family,2,Super Area,22000
+10,Bangalore,Electronic City,3,1400,8,16,Semi-Furnished,Family,3,Super Area,30000
+11,Delhi,Dwarka,2,1000,4,11,Semi-Furnished,Family,2,Super Area,20000
+12,Delhi,Lajpat Nagar,3,1300,2,6,Furnished,Family,3,Carpet Area,45000
+13,Delhi,Karol Bagh,1,500,1,4,Unfurnished,Bachelor,1,Super Area,10000
+14,Delhi,Rohini,2,950,5,9,Semi-Furnished,Family,2,Super Area,18000
+15,Delhi,Vasant Kunj,4,2000,7,14,Furnished,Family,4,Super Area,80000
+16,Pune,Kothrud,2,850,3,7,Semi-Furnished,Family,2,Super Area,18000
+17,Pune,Wakad,3,1200,4,12,Unfurnished,Family,3,Super Area,22000
+18,Pune,Hinjewadi,2,900,6,10,Furnished,Bachelor,2,Carpet Area,25000
+19,Pune,Baner,1,500,2,5,Unfurnished,Bachelor,1,Super Area,12000
+20,Pune,Koregaon Park,3,1500,5,9,Furnished,Family,3,Super Area,45000
+21,Hyderabad,Gachibowli,2,1050,3,11,Furnished,Bachelor,2,Super Area,28000
+22,Hyderabad,Hitech City,3,1400,7,15,Semi-Furnished,Family,3,Carpet Area,35000
+23,Hyderabad,Madhapur,2,900,4,8,Unfurnished,Family,2,Super Area,18000
+24,Hyderabad,Kondapur,1,600,2,6,Furnished,Bachelor,1,Super Area,15000
+25,Hyderabad,Kukatpally,3,1300,5,10,Semi-Furnished,Family,3,Super Area,25000
+26,Chennai,Adyar,2,1000,3,8,Semi-Furnished,Family,2,Super Area,22000
+27,Chennai,Anna Nagar,3,1400,5,11,Furnished,Family,3,Carpet Area,40000
+28,Chennai,Velachery,2,850,2,6,Unfurnished,Bachelor,2,Super Area,16000
+29,Chennai,OMR,3,1200,4,9,Semi-Furnished,Family,3,Super Area,28000
+30,Chennai,T Nagar,1,550,1,5,Furnished,Bachelor,1,Super Area,18000
+31,Kolkata,Salt Lake,2,1100,3,9,Semi-Furnished,Family,2,Super Area,20000
+32,Kolkata,Park Street,3,1500,6,12,Furnished,Family,3,Carpet Area,55000
+33,Kolkata,Rajarhat,2,900,4,10,Unfurnished,Bachelor,2,Super Area,14000
+34,Kolkata,Jadavpur,1,500,2,5,Semi-Furnished,Bachelor,1,Super Area,10000
+35,Kolkata,Ballygunge,3,1300,5,10,Furnished,Family,3,Super Area,38000
+36,Mumbai,Thane,2,1000,4,12,Unfurnished,Family,2,Super Area,22000
+37,Mumbai,Malad,3,1150,3,9,Semi-Furnished,Family,3,Super Area,30000
+38,Bangalore,Marathahalli,2,950,5,11,Furnished,Bachelor,2,Super Area,26000
+39,Bangalore,BTM Layout,1,480,1,4,Unfurnished,Bachelor,1,Carpet Area,12000
+40,Delhi,Noida Sector 62,3,1350,8,18,Furnished,Family,3,Super Area,40000
+41,Pune,Viman Nagar,2,800,3,7,Semi-Furnished,Bachelor,2,Carpet Area,20000
+42,Hyderabad,Begumpet,4,1800,6,12,Furnished,Family,4,Super Area,55000
+43,Chennai,Porur,2,900,2,6,Semi-Furnished,Family,2,Super Area,18000
+44,Mumbai,Chembur,2,800,4,8,Unfurnished,Family,2,Super Area,24000
+45,Bangalore,JP Nagar,3,1250,3,10,Furnished,Family,3,Super Area,32000
+46,Delhi,Gurgaon,4,2200,9,20,Furnished,Family,4,Carpet Area,90000
+47,Pune,Magarpatta,3,1400,7,14,Furnished,Family,3,Super Area,40000
+48,Hyderabad,Uppal,2,850,2,6,Unfurnished,Bachelor,2,Super Area,14000
+49,Chennai,Nungambakkam,3,1600,4,8,Furnished,Family,3,Super Area,50000
+50,Kolkata,New Town,3,1350,5,12,Semi-Furnished,Family,3,Super Area,30000
