@@ -1,23 +1,17 @@
 // =========================================================
 // Jenkinsfile - Home Rent Prediction MLOps Pipeline
 // =========================================================
-// Runs on a Linux (Ubuntu) Jenkins agent with Python 3 and
-// Docker installed. Implements the full flow:
-//
-//   Checkout -> Install Deps -> Data Validation -> Train Model
-//   -> Unit Tests -> Docker Build -> Docker Deploy
-// =========================================================
 
 pipeline {
     agent any
 
     environment {
-        PROJECT_DIR         = "home_rent_mlops_app"
-        PYTHON_ENV           = "venv"
-        IMAGE_NAME            = "home-rent-mlops-app"
-        IMAGE_TAG              = "${env.BUILD_NUMBER}"
-        CONTAINER_NAME          = "home_rent_app"
-        APP_PORT                 = "5000"
+        PROJECT_DIR = "home_rent_mlops_app"
+        PYTHON_ENV = "venv"
+        IMAGE_NAME = "home-rent-mlops-app"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        CONTAINER_NAME = "home_rent_app"
+        APP_PORT = "5000"
         MLFLOW_TRACKING_URI = "file://${WORKSPACE}/${PROJECT_DIR}/mlruns"
     }
 
@@ -50,7 +44,7 @@ pipeline {
 
         stage('3. Run Data Validation') {
             steps {
-                echo "Generating dataset (if needed) and running data validation..."
+                echo "Generating dataset and running data validation..."
                 sh '''
                     cd ${PROJECT_DIR}
                     . ${PYTHON_ENV}/bin/activate
@@ -67,7 +61,7 @@ pipeline {
 
         stage('4. Train ML Model') {
             steps {
-                echo "Training candidate models and logging to MLflow..."
+                echo "Training ML model..."
                 sh '''
                     cd ${PROJECT_DIR}
                     . ${PYTHON_ENV}/bin/activate
@@ -84,7 +78,7 @@ pipeline {
 
         stage('5. Run Unit Tests') {
             steps {
-                echo "Running pytest unit test suite..."
+                echo "Running unit tests..."
                 sh '''
                     cd ${PROJECT_DIR}
                     . ${PYTHON_ENV}/bin/activate
@@ -100,7 +94,7 @@ pipeline {
 
         stage('6. Build Docker Image') {
             steps {
-                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
+                echo "Building Docker image..."
                 sh '''
                     cd ${PROJECT_DIR}
                     docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
@@ -110,6 +104,41 @@ pipeline {
 
         stage('7. Deploy Docker Container') {
             steps {
-                echo "Deploying container on port ${APP_PORT}..."
+                echo "Deploying Docker container..."
                 sh '''
-                    docker stop
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+
+                    docker run -d \
+                        --name ${CONTAINER_NAME} \
+                        -p ${APP_PORT}:5000 \
+                        ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+
+        stage('8. Health Check') {
+            steps {
+                echo "Checking application health..."
+                sh '''
+                    sleep 5
+                    curl -f http://localhost:${APP_PORT}/health
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+
+        failure {
+            echo "Pipeline failed. Please check console output."
+        }
+
+        always {
+            echo "Pipeline execution finished."
+        }
+    }
+}
