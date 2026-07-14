@@ -1,0 +1,26 @@
+
+services:
+  home-rent-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: home-rent-mlops-app:latest
+    container_name: home_rent_app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_DEBUG=false
+      - MODEL_PATH=/app/models/model_latest.joblib
+      - MLFLOW_TRACKING_URI=file:///app/mlruns
+    volumes:
+      # Persist trained models & MLflow runs across container restarts
+      - ./models:/app/models
+      - ./mlruns:/app/mlruns
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

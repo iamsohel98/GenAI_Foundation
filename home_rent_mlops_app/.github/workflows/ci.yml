@@ -1,0 +1,83 @@
+name: CI - Home Rent MLOps Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  build-train-test:
+    name: Install → Train → Test → Docker Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate & validate dataset
+        run: |
+          python src/generate_data.py
+          python src/data_validation.py
+
+      - name: Train ML model (MLflow tracking)
+        env:
+          MLFLOW_TRACKING_URI: file://${{ github.workspace }}/mlruns
+        run: |
+          python src/train.py
+
+      - name: Run unit tests (pytest)
+        run: |
+          pytest --junitxml=test-results.xml --cov=src --cov=app tests/
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.xml
+
+      - name: Upload trained model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            models/*.joblib
+            models/model_metadata.json
+
+      - name: Upload data validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: data/validation_report.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: home-rent-mlops-app:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test the built image
+        run: |
+          docker run -d --name home_rent_ci -p 5000:5000 home-rent-mlops-app:${{ github.sha }}
+          sleep 12
+          curl --fail http://localhost:5000/health
+          docker stop home_rent_ci

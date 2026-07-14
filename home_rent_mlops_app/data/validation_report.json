@@ -1,0 +1,13 @@
+{
+    "file_path": "/home/ubuntu/Desktop/EmbbedingDemo/home_rent_mlops_app/data/home_rent_data.csv",
+    "total_rows": 1203,
+    "total_columns": 7,
+    "missing_columns": [],
+    "null_counts": {
+        "bathrooms": 5
+    },
+    "duplicate_rows": 3,
+    "rows_after_cleaning": 1195,
+    "is_valid": true,
+    "errors": []
+}

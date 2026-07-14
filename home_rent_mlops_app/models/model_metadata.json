@@ -1,0 +1,12 @@
+{
+    "model_name": "random_forest",
+    "version": "20260714053304",
+    "metrics": {
+        "r2_score": 0.9506009754394003,
+        "mae": 4312.282699951456,
+        "rmse": 6219.950662734536
+    },
+    "mlflow_run_id": "b9a8937008654778924745f2d62a4a3f",
+    "registered_at_utc": "2026-07-14T05:33:04.338473",
+    "artifact_path": "model_v20260714053304.joblib"
+}
