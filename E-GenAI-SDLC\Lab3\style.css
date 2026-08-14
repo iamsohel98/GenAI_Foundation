@@ -1,0 +1,163 @@
+/* CSS custom properties — change colors in one place instead of hunting through the file */
+:root {
+  --color-bg-page:        #1a1a2e;
+  --color-bg-calculator:  #16213e;
+  --color-bg-display:     #e37384;
+  --color-text-expression:#a0003a;
+  --color-text-result:    #1a1a2e;
+
+  --color-btn-number:     #87ceeb;
+  --color-btn-number-hover:#60bde0;
+  --color-btn-operator:   #ffd700;
+  --color-btn-operator-hover:#ffe033;
+  --color-btn-clear:      #e74c3c;
+  --color-btn-clear-hover:#d7220e;
+  --color-btn-equals:     #87ceeb;
+  --color-btn-equals-hover:#60bde0;
+  --color-btn-text-dark:  #1a1a2e;
+  --color-btn-text-light: #ffffff;
+
+  --radius-card: 20px;
+  --radius-btn:  12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calculator {
+  background: var(--color-bg-calculator);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  width: 320px;
+}
+
+/* Display */
+.display {
+  background: var(--color-bg-display);
+  border-radius: var(--radius-btn);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.expression {
+  color: var(--color-text-expression);
+  font-size: 0.9rem;
+  min-height: 20px;
+  word-break: break-all;
+  text-align: right;
+}
+
+.result {
+  color: var(--color-text-result);
+  font-size: 2.2rem;
+  font-weight: 300;
+  word-break: break-all;
+  text-align: right;
+}
+
+/* Button Grid */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Base Button */
+.btn {
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+/* Keyboard-navigation focus indicator — visible only when using keyboard */
+.btn:focus-visible {
+  outline: 3px solid var(--color-btn-operator);
+  outline-offset: 2px;
+}
+
+/* Number Buttons */
+.btn-number {
+  background: var(--color-btn-number);
+  color: var(--color-btn-text-dark);
+}
+
+.btn-number:hover {
+  background: var(--color-btn-number-hover);
+}
+
+/* Operator Buttons */
+.btn-operator {
+  background: var(--color-btn-operator);
+  color: var(--color-btn-text-dark);
+  font-weight: 700;
+}
+
+.btn-operator:hover {
+  background: var(--color-btn-operator-hover);
+}
+
+/* Equals Button */
+.btn-equals {
+  background: var(--color-btn-equals);
+  color: var(--color-btn-text-dark);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.btn-equals:hover {
+  background: var(--color-btn-equals-hover);
+}
+
+/* Clear Button */
+.btn-clear {
+  background: var(--color-btn-clear);
+  color: var(--color-btn-text-light);
+  font-weight: 600;
+}
+
+.btn-clear:hover {
+  background: var(--color-btn-clear-hover);
+}
+
+/* Delete Button */
+.btn-delete {
+  background: var(--color-btn-number);
+  color: var(--color-btn-text-dark);
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background: var(--color-btn-number-hover);
+}
+
+/* Wide Button (spans 2 columns) */
+.btn-wide {
+  grid-column: span 2;
+}

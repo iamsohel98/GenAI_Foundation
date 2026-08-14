@@ -1,0 +1,1114 @@
+{
+  "test_suite": "TravelPlanner",
+  "total_tests": 69,
+  "test_classes": [
+    {
+      "class": "TestInit",
+      "description": "Verify initial state of a new TravelPlanner instance",
+      "tests": [
+        {
+          "id": "TC_INIT_001",
+          "name": "test_all_fields_none_on_creation",
+          "description": "All instance variables should be None when TravelPlanner is first created",
+          "input": {},
+          "expected": {
+            "destination": null,
+            "start_date": null,
+            "end_date": null,
+            "budget": null
+          }
+        }
+      ]
+    },
+    {
+      "class": "TestAddTripValid",
+      "description": "Valid inputs to add_trip() should be accepted and stored correctly",
+      "tests": [
+        {
+          "id": "TC_ADD_VALID_001",
+          "name": "test_sets_destination",
+          "description": "destination field should be set to the provided value",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 2000 },
+          "expected": { "destination": "Tokyo" }
+        },
+        {
+          "id": "TC_ADD_VALID_002",
+          "name": "test_sets_start_date_as_date_object",
+          "description": "start_date should be stored as a date object, not a string",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 2000 },
+          "expected": { "start_date": "2026-01-01", "type": "datetime.date" }
+        },
+        {
+          "id": "TC_ADD_VALID_003",
+          "name": "test_sets_end_date_as_date_object",
+          "description": "end_date should be stored as a date object, not a string",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 2000 },
+          "expected": { "end_date": "2026-01-10", "type": "datetime.date" }
+        },
+        {
+          "id": "TC_ADD_VALID_004",
+          "name": "test_sets_budget_as_float",
+          "description": "budget should be stored as a float value",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 2000 },
+          "expected": { "budget": 2000.0, "type": "float" }
+        },
+        {
+          "id": "TC_ADD_VALID_005",
+          "name": "test_accepts_integer_budget",
+          "description": "An integer budget should be accepted and converted to float",
+          "input": { "destination": "Rome", "start_date": "2026-03-01", "end_date": "2026-03-05", "budget": 1500 },
+          "expected": { "budget": 1500.0 }
+        },
+        {
+          "id": "TC_ADD_VALID_006",
+          "name": "test_strips_destination_whitespace",
+          "description": "Leading and trailing whitespace in destination should be stripped",
+          "input": { "destination": "  Berlin  ", "start_date": "2026-05-01", "end_date": "2026-05-10", "budget": 1000 },
+          "expected": { "destination": "Berlin" }
+        },
+        {
+          "id": "TC_ADD_VALID_007",
+          "name": "test_same_start_and_end_date_allowed",
+          "description": "A single-day trip where start_date equals end_date should be valid",
+          "input": { "destination": "London", "start_date": "2026-06-15", "end_date": "2026-06-15", "budget": 500 },
+          "expected": { "start_date": "2026-06-15", "end_date": "2026-06-15" }
+        },
+        {
+          "id": "TC_ADD_VALID_008",
+          "name": "test_prints_success_message",
+          "description": "A success message containing the destination name should be printed",
+          "input": { "destination": "Madrid", "start_date": "2026-07-01", "end_date": "2026-07-05", "budget": 800 },
+          "expected": { "stdout_contains": ["Madrid", "successfully"] }
+        }
+      ]
+    },
+    {
+      "class": "TestAddTripInvalid",
+      "description": "Invalid inputs to add_trip() should raise appropriate exceptions",
+      "tests": [
+        {
+          "id": "TC_ADD_INV_001",
+          "name": "test_raises_if_trip_already_exists",
+          "description": "Adding a second trip without resetting should raise RuntimeError",
+          "precondition": "Trip already added (Paris, France)",
+          "input": { "destination": "Tokyo", "start_date": "2026-09-01", "end_date": "2026-09-10", "budget": 1000 },
+          "expected": { "raises": "RuntimeError", "match": "already exists" }
+        },
+        {
+          "id": "TC_ADD_INV_002",
+          "name": "test_raises_on_empty_destination",
+          "description": "An empty string destination should raise ValueError",
+          "input": { "destination": "", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 1000 },
+          "expected": { "raises": "ValueError", "match": "non-empty string" }
+        },
+        {
+          "id": "TC_ADD_INV_003",
+          "name": "test_raises_on_whitespace_destination",
+          "description": "A whitespace-only destination should raise ValueError",
+          "input": { "destination": "   ", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 1000 },
+          "expected": { "raises": "ValueError", "match": "non-empty string" }
+        },
+        {
+          "id": "TC_ADD_INV_004",
+          "name": "test_raises_on_non_string_destination",
+          "description": "A non-string destination (e.g. integer) should raise ValueError",
+          "input": { "destination": 123, "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 1000 },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_005",
+          "name": "test_raises_on_invalid_start_date_format",
+          "description": "A start_date not in YYYY-MM-DD format should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "01-01-2026", "end_date": "2026-01-10", "budget": 1000 },
+          "expected": { "raises": "ValueError", "match": "YYYY-MM-DD" }
+        },
+        {
+          "id": "TC_ADD_INV_006",
+          "name": "test_raises_on_invalid_end_date_format",
+          "description": "An end_date not in YYYY-MM-DD format should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "10/01/2026", "budget": 1000 },
+          "expected": { "raises": "ValueError", "match": "YYYY-MM-DD" }
+        },
+        {
+          "id": "TC_ADD_INV_007",
+          "name": "test_raises_on_empty_start_date",
+          "description": "An empty start_date string should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "", "end_date": "2026-01-10", "budget": 1000 },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_008",
+          "name": "test_raises_when_end_before_start",
+          "description": "end_date earlier than start_date should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-10", "end_date": "2026-01-01", "budget": 1000 },
+          "expected": { "raises": "ValueError", "match": "on or after" }
+        },
+        {
+          "id": "TC_ADD_INV_009",
+          "name": "test_raises_on_zero_budget",
+          "description": "A budget of 0 should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": 0 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_ADD_INV_010",
+          "name": "test_raises_on_negative_budget",
+          "description": "A negative budget should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": -500 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_ADD_INV_011",
+          "name": "test_raises_on_string_budget",
+          "description": "A string budget (e.g. '3500') should raise ValueError",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": "3500" },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_012",
+          "name": "test_raises_on_boolean_budget",
+          "description": "A boolean budget should raise ValueError (bool is subclass of int in Python)",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": true },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_013",
+          "name": "test_state_unchanged_after_failed_add",
+          "description": "Object state must remain clean if add_trip validation fails",
+          "input": { "destination": "Tokyo", "start_date": "2026-01-01", "end_date": "2026-01-10", "budget": -1 },
+          "expected": { "raises": "ValueError", "post_state": { "destination": null, "budget": null } }
+        }
+      ]
+    },
+    {
+      "class": "TestCalculateTripDuration",
+      "description": "Verify correct inclusive day count between start and end dates",
+      "tests": [
+        {
+          "id": "TC_DUR_001",
+          "name": "test_multi_day_trip",
+          "description": "2026-08-10 to 2026-08-20 inclusive should return 11 days",
+          "precondition": "Trip added: Paris, France, 2026-08-10 to 2026-08-20, $3500",
+          "input": {},
+          "expected": { "return_value": 11 }
+        },
+        {
+          "id": "TC_DUR_002",
+          "name": "test_single_day_trip",
+          "description": "Same start and end date should return duration of 1",
+          "precondition": "Trip added: Oslo, 2026-03-05 to 2026-03-05, $300",
+          "input": {},
+          "expected": { "return_value": 1 }
+        },
+        {
+          "id": "TC_DUR_003",
+          "name": "test_month_boundary",
+          "description": "Trip crossing a month boundary (Jan 30 to Feb 2) should return 4 days",
+          "precondition": "Trip added: Vienna, 2026-01-30 to 2026-02-02, $400",
+          "input": {},
+          "expected": { "return_value": 4 }
+        },
+        {
+          "id": "TC_DUR_004",
+          "name": "test_raises_without_trip",
+          "description": "Calling calculate_trip_duration() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError", "match": "add_trip" }
+        }
+      ]
+    },
+    {
+      "class": "TestUpdateBudget",
+      "description": "Verify budget update behaviour including validation and output",
+      "tests": [
+        {
+          "id": "TC_UPD_001",
+          "name": "test_updates_budget_value",
+          "description": "Budget should be updated to the new value",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 5000 },
+          "expected": { "budget": 5000.0 }
+        },
+        {
+          "id": "TC_UPD_002",
+          "name": "test_budget_stored_as_float",
+          "description": "Updated budget should be stored as a float",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 4000 },
+          "expected": { "budget_type": "float" }
+        },
+        {
+          "id": "TC_UPD_003",
+          "name": "test_prints_old_and_new_budget",
+          "description": "Console output should show both old and new budget values",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 4000 },
+          "expected": { "stdout_contains": ["3,500.00", "4,000.00"] }
+        },
+        {
+          "id": "TC_UPD_004",
+          "name": "test_raises_without_trip",
+          "description": "Calling update_budget() with no trip should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": { "new_budget": 1000 },
+          "expected": { "raises": "RuntimeError" }
+        },
+        {
+          "id": "TC_UPD_005",
+          "name": "test_raises_on_zero_budget",
+          "description": "Updating with budget of 0 should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 0 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_UPD_006",
+          "name": "test_raises_on_negative_budget",
+          "description": "Updating with a negative budget should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": -100 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_UPD_007",
+          "name": "test_raises_on_string_budget",
+          "description": "Updating with a string budget should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": "5000" },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_UPD_008",
+          "name": "test_raises_on_boolean_budget",
+          "description": "Updating with a boolean should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": true },
+          "expected": { "raises": "ValueError" }
+        }
+      ]
+    },
+    {
+      "class": "TestDisplayTrip",
+      "description": "Verify __str__ content and display_trip() print behaviour",
+      "tests": [
+        {
+          "id": "TC_DISP_001",
+          "name": "test_str_contains_destination",
+          "description": "__str__ output should include the destination name",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "str_contains": "Paris, France" }
+        },
+        {
+          "id": "TC_DISP_002",
+          "name": "test_str_contains_start_date",
+          "description": "__str__ output should include the start date",
+          "precondition": "Trip added with start_date 2026-08-10",
+          "input": {},
+          "expected": { "str_contains": "2026-08-10" }
+        },
+        {
+          "id": "TC_DISP_003",
+          "name": "test_str_contains_end_date",
+          "description": "__str__ output should include the end date",
+          "precondition": "Trip added with end_date 2026-08-20",
+          "input": {},
+          "expected": { "str_contains": "2026-08-20" }
+        },
+        {
+          "id": "TC_DISP_004",
+          "name": "test_str_contains_duration",
+          "description": "__str__ output should include the calculated duration",
+          "precondition": "Trip added: 2026-08-10 to 2026-08-20 (11 days)",
+          "input": {},
+          "expected": { "str_contains": "11 day(s)" }
+        },
+        {
+          "id": "TC_DISP_005",
+          "name": "test_str_contains_budget",
+          "description": "__str__ output should include the formatted budget",
+          "precondition": "Trip added with budget $3500",
+          "input": {},
+          "expected": { "str_contains": "3,500.00" }
+        },
+        {
+          "id": "TC_DISP_006",
+          "name": "test_display_trip_prints_output",
+          "description": "display_trip() should print the destination to stdout",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "stdout_contains": "Paris, France" }
+        },
+        {
+          "id": "TC_DISP_007",
+          "name": "test_str_raises_without_trip",
+          "description": "Calling str() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        },
+        {
+          "id": "TC_DISP_008",
+          "name": "test_display_trip_raises_without_trip",
+          "description": "Calling display_trip() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        }
+      ]
+    },
+    {
+      "class": "TestResetTrip",
+      "description": "Verify reset_trip() clears state and allows a fresh trip to be added",
+      "tests": [
+        {
+          "id": "TC_RST_001",
+          "name": "test_clears_all_fields",
+          "description": "After reset, all four fields should be None",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "destination": null, "start_date": null, "end_date": null, "budget": null }
+        },
+        {
+          "id": "TC_RST_002",
+          "name": "test_allows_new_add_trip_after_reset",
+          "description": "add_trip() should succeed after reset_trip() is called",
+          "precondition": "Trip added: Paris, France, then reset",
+          "input": { "destination": "Tokyo", "start_date": "2026-12-01", "end_date": "2026-12-10", "budget": 2000 },
+          "expected": { "destination": "Tokyo" }
+        },
+        {
+          "id": "TC_RST_003",
+          "name": "test_prints_cleared_message",
+          "description": "reset_trip() should print a message confirming data was cleared",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "stdout_contains": "cleared" }
+        },
+        {
+          "id": "TC_RST_004",
+          "name": "test_reset_on_empty_planner_is_safe",
+          "description": "Calling reset_trip() on a planner with no trip should not raise any exception",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": null, "destination": null }
+        }
+      ]
+    },
+    {
+      "class": "TestEstimateHotelExpenses",
+      "description": "Verify hotel expense calculations for valid and invalid inputs",
+      "tests": [
+        {
+          "id": "TC_HOTEL_001",
+          "name": "test_default_ratio_hotel_budget",
+          "description": "40% of $3500 should return total_hotel_budget of $1400",
+          "precondition": "Trip added: Paris, France, 2026-08-10 to 2026-08-20, $3500",
+          "input": {},
+          "expected": { "total_hotel_budget": 1400.00 }
+        },
+        {
+          "id": "TC_HOTEL_002",
+          "name": "test_default_ratio_remaining_budget",
+          "description": "Remaining budget should be $3500 - $1400 = $2100",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "remaining_budget": 2100.00 }
+        },
+        {
+          "id": "TC_HOTEL_003",
+          "name": "test_default_ratio_nights",
+          "description": "11-day trip should produce 10 nights",
+          "precondition": "Trip added: 2026-08-10 to 2026-08-20 (11 days)",
+          "input": {},
+          "expected": { "nights": 10 }
+        },
+        {
+          "id": "TC_HOTEL_004",
+          "name": "test_default_ratio_nightly_rate",
+          "description": "$1400 / 10 nights = $140.00/night",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "nightly_rate": 140.00 }
+        },
+        {
+          "id": "TC_HOTEL_005",
+          "name": "test_custom_ratio_hotel_budget",
+          "description": "50% of $3500 = $1750 hotel budget",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 0.50 },
+          "expected": { "total_hotel_budget": 1750.00 }
+        },
+        {
+          "id": "TC_HOTEL_006",
+          "name": "test_custom_ratio_remaining_budget",
+          "description": "Remaining with 50% ratio = $1750",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 0.50 },
+          "expected": { "remaining_budget": 1750.00 }
+        },
+        {
+          "id": "TC_HOTEL_007",
+          "name": "test_ratio_of_one_allocates_full_budget",
+          "description": "ratio=1.0 should allocate entire budget to hotel, remaining=0",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 1.0 },
+          "expected": { "total_hotel_budget": 3500.00, "remaining_budget": 0.00 }
+        },
+        {
+          "id": "TC_HOTEL_008",
+          "name": "test_return_type_is_dict",
+          "description": "Return value should be a dict",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "type": "dict" }
+        },
+        {
+          "id": "TC_HOTEL_009",
+          "name": "test_dict_has_required_keys",
+          "description": "Returned dict must contain all four required keys",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "keys": ["total_hotel_budget", "nightly_rate", "nights", "remaining_budget"] }
+        },
+        {
+          "id": "TC_HOTEL_010",
+          "name": "test_single_day_trip_nights_minimum_one",
+          "description": "Single-day trip should produce minimum 1 night to avoid division by zero",
+          "precondition": "Trip added: Oslo, 2026-03-05 to 2026-03-05, $300",
+          "input": {},
+          "expected": { "nights": 1 }
+        },
+        {
+          "id": "TC_HOTEL_011",
+          "name": "test_raises_without_trip",
+          "description": "Calling without a trip loaded should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        },
+        {
+          "id": "TC_HOTEL_012",
+          "name": "test_raises_on_zero_ratio",
+          "description": "hotel_budget_ratio of 0 should raise ValueError (exclusive lower bound)",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 0 },
+          "expected": { "raises": "ValueError", "match": "0 (exclusive)" }
+        },
+        {
+          "id": "TC_HOTEL_013",
+          "name": "test_raises_on_ratio_above_one",
+          "description": "hotel_budget_ratio > 1 should raise ValueError",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 1.1 },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_HOTEL_014",
+          "name": "test_raises_on_negative_ratio",
+          "description": "A negative ratio should raise ValueError",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": -0.5 },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_HOTEL_015",
+          "name": "test_raises_on_boolean_ratio",
+          "description": "A boolean ratio should raise ValueError",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": true },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_HOTEL_016",
+          "name": "test_raises_on_string_ratio",
+          "description": "A string ratio should raise ValueError",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": "0.4" },
+          "expected": { "raises": "ValueError" }
+        }
+      ]
+    },
+    {
+      "class": "TestDisplayHotelExpenses",
+      "description": "Verify display_hotel_expenses() prints correct formatted output",
+      "tests": [
+        {
+          "id": "TC_DHOTEL_001",
+          "name": "test_prints_hotel_budget",
+          "description": "Output should contain the formatted hotel budget ($1,400.00)",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "stdout_contains": "1,400.00" }
+        },
+        {
+          "id": "TC_DHOTEL_002",
+          "name": "test_prints_nightly_rate",
+          "description": "Output should contain the nightly rate ($140.00)",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "stdout_contains": "140.00" }
+        },
+        {
+          "id": "TC_DHOTEL_003",
+          "name": "test_prints_nights",
+          "description": "Output should contain the number of nights (10)",
+          "precondition": "Trip added: 2026-08-10 to 2026-08-20",
+          "input": {},
+          "expected": { "stdout_contains": "10" }
+        },
+        {
+          "id": "TC_DHOTEL_004",
+          "name": "test_prints_remaining_budget",
+          "description": "Output should contain the remaining budget ($2,100.00)",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "stdout_contains": "2,100.00" }
+        },
+        {
+          "id": "TC_DHOTEL_005",
+          "name": "test_prints_total_budget",
+          "description": "Output should contain the total budget ($3,500.00)",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": {},
+          "expected": { "stdout_contains": "3,500.00" }
+        },
+        {
+          "id": "TC_DHOTEL_006",
+          "name": "test_custom_ratio_reflected_in_output",
+          "description": "Custom 50% ratio should show '50%' and $1,750.00 hotel budget in output",
+          "precondition": "Trip added: Paris, France, $3500",
+          "input": { "hotel_budget_ratio": 0.50 },
+          "expected": { "stdout_contains": ["50%", "1,750.00"] }
+        },
+        {
+          "id": "TC_DHOTEL_007",
+          "name": "test_raises_without_trip",
+          "description": "Calling without a trip loaded should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        }
+      ]
+    }
+  ]
+}
+  "test_classes": [
+    {
+      "class": "TestInit",
+      "description": "Verify initial state of a new TravelPlanner instance",
+      "tests": [
+        {
+          "id": "TC_INIT_001",
+          "name": "test_all_fields_none_on_creation",
+          "description": "All instance variables should be None when TravelPlanner is first created",
+          "input": {},
+          "expected": {
+            "destination": null,
+            "start_date": null,
+            "end_date": null,
+            "budget": null
+          }
+        }
+      ]
+    },
+    {
+      "class": "TestAddTripValid",
+      "description": "Valid inputs to add_trip() should be accepted and stored correctly",
+      "tests": [
+        {
+          "id": "TC_ADD_VALID_001",
+          "name": "test_sets_destination",
+          "description": "destination field should be set to the provided value",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 2000
+          },
+          "expected": { "destination": "Tokyo" }
+        },
+        {
+          "id": "TC_ADD_VALID_002",
+          "name": "test_sets_start_date_as_date_object",
+          "description": "start_date should be stored as a date object, not a string",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 2000
+          },
+          "expected": { "start_date": "2026-01-01", "type": "datetime.date" }
+        },
+        {
+          "id": "TC_ADD_VALID_003",
+          "name": "test_sets_end_date_as_date_object",
+          "description": "end_date should be stored as a date object, not a string",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 2000
+          },
+          "expected": { "end_date": "2026-01-10", "type": "datetime.date" }
+        },
+        {
+          "id": "TC_ADD_VALID_004",
+          "name": "test_sets_budget_as_float",
+          "description": "budget should be stored as a float value",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 2000
+          },
+          "expected": { "budget": 2000.0, "type": "float" }
+        },
+        {
+          "id": "TC_ADD_VALID_005",
+          "name": "test_accepts_integer_budget",
+          "description": "An integer budget should be accepted and converted to float",
+          "input": {
+            "destination": "Rome",
+            "start_date": "2026-03-01",
+            "end_date": "2026-03-05",
+            "budget": 1500
+          },
+          "expected": { "budget": 1500.0 }
+        },
+        {
+          "id": "TC_ADD_VALID_006",
+          "name": "test_strips_destination_whitespace",
+          "description": "Leading and trailing whitespace in destination should be stripped",
+          "input": {
+            "destination": "  Berlin  ",
+            "start_date": "2026-05-01",
+            "end_date": "2026-05-10",
+            "budget": 1000
+          },
+          "expected": { "destination": "Berlin" }
+        },
+        {
+          "id": "TC_ADD_VALID_007",
+          "name": "test_same_start_and_end_date_allowed",
+          "description": "A single-day trip where start_date equals end_date should be valid",
+          "input": {
+            "destination": "London",
+            "start_date": "2026-06-15",
+            "end_date": "2026-06-15",
+            "budget": 500
+          },
+          "expected": { "start_date": "2026-06-15", "end_date": "2026-06-15" }
+        },
+        {
+          "id": "TC_ADD_VALID_008",
+          "name": "test_prints_success_message",
+          "description": "A success message containing the destination name should be printed",
+          "input": {
+            "destination": "Madrid",
+            "start_date": "2026-07-01",
+            "end_date": "2026-07-05",
+            "budget": 800
+          },
+          "expected": { "stdout_contains": ["Madrid", "successfully"] }
+        }
+      ]
+    },
+    {
+      "class": "TestAddTripInvalid",
+      "description": "Invalid inputs to add_trip() should raise appropriate exceptions",
+      "tests": [
+        {
+          "id": "TC_ADD_INV_001",
+          "name": "test_raises_if_trip_already_exists",
+          "description": "Adding a second trip without resetting should raise RuntimeError",
+          "precondition": "Trip already added (Paris, France)",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-09-01",
+            "end_date": "2026-09-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "RuntimeError", "match": "already exists" }
+        },
+        {
+          "id": "TC_ADD_INV_002",
+          "name": "test_raises_on_empty_destination",
+          "description": "An empty string destination should raise ValueError",
+          "input": {
+            "destination": "",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError", "match": "non-empty string" }
+        },
+        {
+          "id": "TC_ADD_INV_003",
+          "name": "test_raises_on_whitespace_destination",
+          "description": "A whitespace-only destination should raise ValueError",
+          "input": {
+            "destination": "   ",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError", "match": "non-empty string" }
+        },
+        {
+          "id": "TC_ADD_INV_004",
+          "name": "test_raises_on_non_string_destination",
+          "description": "A non-string destination (e.g. integer) should raise ValueError",
+          "input": {
+            "destination": 123,
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_005",
+          "name": "test_raises_on_invalid_start_date_format",
+          "description": "A start_date not in YYYY-MM-DD format should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "01-01-2026",
+            "end_date": "2026-01-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError", "match": "YYYY-MM-DD" }
+        },
+        {
+          "id": "TC_ADD_INV_006",
+          "name": "test_raises_on_invalid_end_date_format",
+          "description": "An end_date not in YYYY-MM-DD format should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "10/01/2026",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError", "match": "YYYY-MM-DD" }
+        },
+        {
+          "id": "TC_ADD_INV_007",
+          "name": "test_raises_on_empty_start_date",
+          "description": "An empty start_date string should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "",
+            "end_date": "2026-01-10",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_008",
+          "name": "test_raises_when_end_before_start",
+          "description": "end_date earlier than start_date should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-10",
+            "end_date": "2026-01-01",
+            "budget": 1000
+          },
+          "expected": { "raises": "ValueError", "match": "on or after" }
+        },
+        {
+          "id": "TC_ADD_INV_009",
+          "name": "test_raises_on_zero_budget",
+          "description": "A budget of 0 should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": 0
+          },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_ADD_INV_010",
+          "name": "test_raises_on_negative_budget",
+          "description": "A negative budget should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": -500
+          },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_ADD_INV_011",
+          "name": "test_raises_on_string_budget",
+          "description": "A string budget (e.g. '3500') should raise ValueError",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": "3500"
+          },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_012",
+          "name": "test_raises_on_boolean_budget",
+          "description": "A boolean budget should raise ValueError (bool is subclass of int in Python)",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": true
+          },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_ADD_INV_013",
+          "name": "test_state_unchanged_after_failed_add",
+          "description": "Object state must remain clean if add_trip validation fails",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-01-01",
+            "end_date": "2026-01-10",
+            "budget": -1
+          },
+          "expected": {
+            "raises": "ValueError",
+            "post_state": {
+              "destination": null,
+              "budget": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "class": "TestCalculateTripDuration",
+      "description": "Verify correct inclusive day count between start and end dates",
+      "tests": [
+        {
+          "id": "TC_DUR_001",
+          "name": "test_multi_day_trip",
+          "description": "2026-08-10 to 2026-08-20 inclusive should return 11 days",
+          "precondition": "Trip added: Paris, France, 2026-08-10 to 2026-08-20, $3500",
+          "input": {},
+          "expected": { "return_value": 11 }
+        },
+        {
+          "id": "TC_DUR_002",
+          "name": "test_single_day_trip",
+          "description": "Same start and end date should return duration of 1",
+          "precondition": "Trip added: Oslo, 2026-03-05 to 2026-03-05, $300",
+          "input": {},
+          "expected": { "return_value": 1 }
+        },
+        {
+          "id": "TC_DUR_003",
+          "name": "test_month_boundary",
+          "description": "Trip crossing a month boundary (Jan 30 to Feb 2) should return 4 days",
+          "precondition": "Trip added: Vienna, 2026-01-30 to 2026-02-02, $400",
+          "input": {},
+          "expected": { "return_value": 4 }
+        },
+        {
+          "id": "TC_DUR_004",
+          "name": "test_raises_without_trip",
+          "description": "Calling calculate_trip_duration() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError", "match": "add_trip" }
+        }
+      ]
+    },
+    {
+      "class": "TestUpdateBudget",
+      "description": "Verify budget update behaviour including validation and output",
+      "tests": [
+        {
+          "id": "TC_UPD_001",
+          "name": "test_updates_budget_value",
+          "description": "Budget should be updated to the new value",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 5000 },
+          "expected": { "budget": 5000.0 }
+        },
+        {
+          "id": "TC_UPD_002",
+          "name": "test_budget_stored_as_float",
+          "description": "Updated budget should be stored as a float",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 4000 },
+          "expected": { "budget_type": "float" }
+        },
+        {
+          "id": "TC_UPD_003",
+          "name": "test_prints_old_and_new_budget",
+          "description": "Console output should show both old and new budget values",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 4000 },
+          "expected": { "stdout_contains": ["3,500.00", "4,000.00"] }
+        },
+        {
+          "id": "TC_UPD_004",
+          "name": "test_raises_without_trip",
+          "description": "Calling update_budget() with no trip should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": { "new_budget": 1000 },
+          "expected": { "raises": "RuntimeError" }
+        },
+        {
+          "id": "TC_UPD_005",
+          "name": "test_raises_on_zero_budget",
+          "description": "Updating with budget of 0 should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": 0 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_UPD_006",
+          "name": "test_raises_on_negative_budget",
+          "description": "Updating with a negative budget should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": -100 },
+          "expected": { "raises": "ValueError", "match": "greater than zero" }
+        },
+        {
+          "id": "TC_UPD_007",
+          "name": "test_raises_on_string_budget",
+          "description": "Updating with a string budget should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": "5000" },
+          "expected": { "raises": "ValueError" }
+        },
+        {
+          "id": "TC_UPD_008",
+          "name": "test_raises_on_boolean_budget",
+          "description": "Updating with a boolean should raise ValueError",
+          "precondition": "Trip added with budget $3500",
+          "input": { "new_budget": true },
+          "expected": { "raises": "ValueError" }
+        }
+      ]
+    },
+    {
+      "class": "TestDisplayTrip",
+      "description": "Verify __str__ content and display_trip() print behaviour",
+      "tests": [
+        {
+          "id": "TC_DISP_001",
+          "name": "test_str_contains_destination",
+          "description": "__str__ output should include the destination name",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "str_contains": "Paris, France" }
+        },
+        {
+          "id": "TC_DISP_002",
+          "name": "test_str_contains_start_date",
+          "description": "__str__ output should include the start date",
+          "precondition": "Trip added with start_date 2026-08-10",
+          "input": {},
+          "expected": { "str_contains": "2026-08-10" }
+        },
+        {
+          "id": "TC_DISP_003",
+          "name": "test_str_contains_end_date",
+          "description": "__str__ output should include the end date",
+          "precondition": "Trip added with end_date 2026-08-20",
+          "input": {},
+          "expected": { "str_contains": "2026-08-20" }
+        },
+        {
+          "id": "TC_DISP_004",
+          "name": "test_str_contains_duration",
+          "description": "__str__ output should include the calculated duration",
+          "precondition": "Trip added: 2026-08-10 to 2026-08-20 (11 days)",
+          "input": {},
+          "expected": { "str_contains": "11 day(s)" }
+        },
+        {
+          "id": "TC_DISP_005",
+          "name": "test_str_contains_budget",
+          "description": "__str__ output should include the formatted budget",
+          "precondition": "Trip added with budget $3500",
+          "input": {},
+          "expected": { "str_contains": "3,500.00" }
+        },
+        {
+          "id": "TC_DISP_006",
+          "name": "test_display_trip_prints_output",
+          "description": "display_trip() should print the destination to stdout",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "stdout_contains": "Paris, France" }
+        },
+        {
+          "id": "TC_DISP_007",
+          "name": "test_str_raises_without_trip",
+          "description": "Calling str() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        },
+        {
+          "id": "TC_DISP_008",
+          "name": "test_display_trip_raises_without_trip",
+          "description": "Calling display_trip() on an empty planner should raise RuntimeError",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": "RuntimeError" }
+        }
+      ]
+    },
+    {
+      "class": "TestResetTrip",
+      "description": "Verify reset_trip() clears state and allows a fresh trip to be added",
+      "tests": [
+        {
+          "id": "TC_RST_001",
+          "name": "test_clears_all_fields",
+          "description": "After reset, all four fields should be None",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": {
+            "destination": null,
+            "start_date": null,
+            "end_date": null,
+            "budget": null
+          }
+        },
+        {
+          "id": "TC_RST_002",
+          "name": "test_allows_new_add_trip_after_reset",
+          "description": "add_trip() should succeed after reset_trip() is called",
+          "precondition": "Trip added: Paris, France, then reset",
+          "input": {
+            "destination": "Tokyo",
+            "start_date": "2026-12-01",
+            "end_date": "2026-12-10",
+            "budget": 2000
+          },
+          "expected": { "destination": "Tokyo" }
+        },
+        {
+          "id": "TC_RST_003",
+          "name": "test_prints_cleared_message",
+          "description": "reset_trip() should print a message confirming data was cleared",
+          "precondition": "Trip added: Paris, France",
+          "input": {},
+          "expected": { "stdout_contains": "cleared" }
+        },
+        {
+          "id": "TC_RST_004",
+          "name": "test_reset_on_empty_planner_is_safe",
+          "description": "Calling reset_trip() on a planner with no trip should not raise any exception",
+          "precondition": "No trip added",
+          "input": {},
+          "expected": { "raises": null, "destination": null }
+        }
+      ]
+    }
+  ]
+}
